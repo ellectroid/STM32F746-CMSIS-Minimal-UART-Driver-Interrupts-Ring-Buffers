@@ -12,7 +12,7 @@ void uart1_enable_rx();
 void uart1_disable_tx();
 
 void uart1_sendByte(uint8_t data);
-void uart1_sendArray(uint8_t data[]);
+void uart1_sendArray(uint8_t data[], uint32_t length);
 
 void uart1_receiveByte(uint8_t *data);
 void uart1_receiveArray(uint8_t *arraypointer, uint32_t length);
