@@ -1,0 +1,11 @@
+usart1.c:3:6:uart1_setup	4	static
+usart1.c:22:6:uart1_enable	4	static
+usart1.c:25:6:uart1_disable	4	static
+usart1.c:28:6:uart1_enable_tx	4	static
+usart1.c:31:6:uart1_disable_tx	4	static
+usart1.c:34:6:uart1_enable_rx	4	static
+usart1.c:37:6:uart1_disable_rx	4	static
+usart1.c:41:6:uart1_sendByte	16	static
+usart1.c:45:6:uart1_sendArray	24	static
+usart1.c:58:6:uart1_receiveByte	16	static
+usart1.c:63:6:uart1_receiveArray	24	static

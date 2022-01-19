@@ -1,0 +1,3 @@
+gpio.c:10:6:gpio_setup	8	static
+gpio.c:15:6:gpio_setup_porta	4	static
+gpio.c:26:6:gpio_setup_portb	4	static
