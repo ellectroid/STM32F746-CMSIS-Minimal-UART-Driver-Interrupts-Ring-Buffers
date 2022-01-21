@@ -38,9 +38,7 @@ void uart1_disable_rx() {
 }
 
 void uart1_sendByte(uint8_t data) {
-	USART1->TDR = data; //Load byte into transmit data register to be loaded into shift register; TXE bit cleared
-	while (!(USART1->ISR & USART_ISR_TC)); //Wait until Transfer Complete bit is set
-	USART1->ICR &= USART_ICR_TCCF; //clear transfer complete flag
+	uart1_sendArray(&data, 1U);
 }
 void uart1_sendArray(uint8_t data[], uint32_t length) {
 	USART1->ICR &= USART_ICR_TCCF; //clear transfer complete flag
@@ -58,7 +56,9 @@ void uart1_sendArray(uint8_t data[], uint32_t length) {
 }
 
 void uart1_receiveByte(uint8_t *data) {
-	uart1_receiveArray(data, 1);
+
+	uart1_receiveArray(data, 1U);
+
 }
 void uart1_receiveArray(uint8_t *arraypointer, uint32_t length) {
 	uint8_t *currentpointer = arraypointer;
@@ -71,8 +71,11 @@ void uart1_receiveArray(uint8_t *arraypointer, uint32_t length) {
 		if (((USART1->ISR & USART_ISR_RXNE)) && (currentpointer < arraypointer + length)) { //if buffer is not full yet and there is new data
 			*currentpointer = USART1->RDR;
 			currentpointer++;
+			USART1->RQR |= USART_RQR_RXFRQ; //clear RXNE data received flag
 		}
 	}
+	USART1->RQR |= USART_RQR_RXFRQ; //clear RXNE data received flag for buffer overflow data
+	USART1->ICR |= USART_ICR_ORECF; //clear receiver overrun flag for buffer array overflow
 	USART1->ICR |= USART_ICR_RTOCF; //when receiver timed out and we're done, clear the flag
 }
 

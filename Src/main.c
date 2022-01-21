@@ -17,7 +17,7 @@ int main(void) {
 		uart1_sendByte('\r');uart1_sendByte('\n');
 
 		uint8_t message[] = "Enter a string (10 chars max) and a digit to be sent to you:\r\n";
-		uart1_sendArray(message, 62);
+		uart1_sendArray(message, sizeof(message)/sizeof(message[0]));
 
 		uart1_receiveArray(buffer, 10);
 		uart1_sendArray(buffer, 10);
