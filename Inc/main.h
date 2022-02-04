@@ -7,5 +7,6 @@
 #include "rcc.h"
 #include "gpio.h"
 #include "usart1.h"
+#include "nvic.h"
 
 #endif /* MAIN_H_ */

@@ -5,24 +5,30 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Src/adc.c \
 ../Src/gpio.c \
 ../Src/main.c \
+../Src/nvic.c \
 ../Src/rcc.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c \
 ../Src/usart1.c 
 
 OBJS += \
+./Src/adc.o \
 ./Src/gpio.o \
 ./Src/main.o \
+./Src/nvic.o \
 ./Src/rcc.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o \
 ./Src/usart1.o 
 
 C_DEPS += \
+./Src/adc.d \
 ./Src/gpio.d \
 ./Src/main.d \
+./Src/nvic.d \
 ./Src/rcc.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d \

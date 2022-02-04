@@ -79,3 +79,75 @@ void uart1_receiveArray(uint8_t *arraypointer, uint32_t length) {
 	USART1->ICR |= USART_ICR_RTOCF; //when receiver timed out and we're done, clear the flag
 }
 
+void uart1_it_setup() {
+	//Set all configs to Reset Value
+	USART1->CR1 = 0x00;
+	USART1->CR2 = 0x00;
+	USART1->CR3 = 0x00;
+	USART1->BRR = 0x00;
+	USART1->GTPR = 0x00;
+	USART1->RQR = 0x00;
+	USART1->ISR = 0x020000C0;
+
+	//Set word length 8;
+	USART1->CR1 &= ~(USART_CR1_M);
+	USART1->CR2 |= USART_CR2_RTOEN; //enable receiver timeout
+	USART1->CR3 |= USART_CR3_EIE; //Enable frame error, overrun error, noise flag error
+	USART1->RTOR = 0x01; //receiver times out after one full bit without next start bit
+
+	USART1->BRR = 0x683; //Set baudrate to 9600 (Fck = 16MHz)
+
+	for (uint32_t i = 0; i < UART_TX_BUFFER_LENGTH; i++) {
+		uart1_tx_buffer[i] = 'a'; //make sure data buffer is cleared
+	}
+
+	uart1_tx_buffer_last_element_pointer = 0;
+	uart1_tx_buffer_current_element_pointer = 0;
+
+	//not activating transmission interrupts, activate on demand
+}
+
+uint32_t uart1_it_sendArray(uint8_t data[], uint32_t length, uint8_t include_string_terminator) {
+
+	if (length <= 0)
+		return (uint32_t) 0; //idiot-proofing
+	if (!include_string_terminator)
+		length--;
+	if (length <= 0)
+		return (uint32_t) 0; //idiot-proofing
+	uint32_t bytesPut = 0;
+
+	//stop TXE interrupts so that pointers don't move while we do math
+	USART1->CR1 &= ~USART_CR1_TXEIE;
+
+	//Determine how much free space the ring buffer has (how much available to overwrite; from after last pointer around the ring and including current element)
+	uint32_t max_free_space_tx_buffer = uart1_it_tx_getBufferFreeSpace();
+
+	//for as long as there is something to put and enough room, write data into buffer
+
+	if (USART1->ISR & USART_ISR_TC)
+		uart1_tx_buffer_last_element_pointer--; //compensating if no communication happening, will increment in while loop
+
+	while (bytesPut < length && bytesPut < max_free_space_tx_buffer) {
+		uart1_tx_buffer_last_element_pointer = (uart1_tx_buffer_last_element_pointer + 1U) % UART_TX_BUFFER_LENGTH; //increment last element pointer in the ring
+		uart1_tx_buffer[uart1_tx_buffer_last_element_pointer] = data[bytesPut];
+		bytesPut++;
+	}
+
+	if (USART1->ISR & USART_ISR_TC) { //if no transmission, load the first element
+		USART1->TDR = uart1_tx_buffer[uart1_tx_buffer_current_element_pointer];
+	}
+
+	USART1->CR1 |= USART_CR1_TXEIE; //activate interrupts again
+
+	return bytesPut; //return how many bytes were written to buffer array
+}
+uint32_t uart1_it_tx_getBufferFreeSpace(void) {
+	if (uart1_tx_buffer_last_element_pointer > uart1_tx_buffer_current_element_pointer) {
+		return (UART_TX_BUFFER_LENGTH - (uart1_tx_buffer_last_element_pointer - uart1_tx_buffer_current_element_pointer));
+	} else if (uart1_tx_buffer_last_element_pointer < uart1_tx_buffer_current_element_pointer) {
+		return ((uart1_tx_buffer_current_element_pointer - uart1_tx_buffer_last_element_pointer));
+	}
+	return (UART_TX_BUFFER_LENGTH);
+
+}

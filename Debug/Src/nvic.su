@@ -1,0 +1,4 @@
+core_cm7.h:1896:22:__NVIC_EnableIRQ	16	static
+core_cm7.h:1985:22:__NVIC_ClearPendingIRQ	16	static
+nvic.c:3:6:nvic_setup	8	static
+nvic.c:8:6:USART1_IRQHandler	8	static

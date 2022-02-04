@@ -3,30 +3,29 @@
 int main(void) {
 	rcc_setup();
 	gpio_setup();
-	uart1_setup();
+	//uart1_setup();
+	uart1_it_setup();
 	uart1_enable();
 	uart1_enable_tx();
 	uart1_enable_rx();
+	nvic_setup();
+	uint8_t message1[] = "veryverylongmessage1"; //20 symbols
+	uint8_t message2[] = "shortmessage";
+	uint8_t message3[] = "NEW LINE!!!\r\n";
+	uart1_it_sendArray(message1, sizeof(message1) / sizeof(message1[0]), 0U);
+	uart1_it_sendArray(message1, sizeof(message1) / sizeof(message1[0]), 0U);
+	uart1_it_sendArray(message1, sizeof(message1) / sizeof(message1[0]), 0U);
+	blink_ld1();
+	//while(uart1_it_tx_getBufferFreeSpace()<20);
+	uart1_it_sendArray(message1, sizeof(message1) / sizeof(message1[0]), 0U);
+	//uart1_it_sendArray(message2, sizeof(message2) / sizeof(message2[0]));
+	//uart1_it_sendArray(message3, sizeof(message3) / sizeof(message3[0]));
+	blink_ld1();
+	//uart1_it_sendArray(message1, sizeof(message1) / sizeof(message1[0]));
+	//uart1_it_sendArray(message2, sizeof(message2) / sizeof(message2[0]));
+	//uart1_it_sendArray(message3, sizeof(message3) / sizeof(message3[0]));
 	while (1) {
-		uint8_t buffer[10];
-		uint8_t x;
-		uart1_sendByte('\r');uart1_sendByte('\n');
 
-		uart1_sendByte('H');uart1_sendByte('i');
-
-		uart1_sendByte('\r');uart1_sendByte('\n');
-
-		uint8_t message[] = "Enter a string (10 chars max) and a digit to be sent to you:\r\n";
-		uart1_sendArray(message, sizeof(message)/sizeof(message[0]));
-
-		uart1_receiveArray(buffer, 10);
-		uart1_sendArray(buffer, 10);
-
-		uart1_sendByte('\r');
-		uart1_sendByte('\n');
-
-		uart1_receiveByte(&x);
-		uart1_sendByte(x);
 	}
 	return 0;
 }
