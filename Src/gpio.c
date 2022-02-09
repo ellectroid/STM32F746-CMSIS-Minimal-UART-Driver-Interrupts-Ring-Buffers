@@ -4,17 +4,17 @@
  * Private functions
  */
 
-void gpio_setup_porta();
-void gpio_setup_portb();
-void gpio_setup_porti();
+void gpio_setup_porta(void);
+void gpio_setup_portb(void);
+void gpio_setup_porti(void);
 
-void gpio_setup() {
+void gpio_setup(void) {
 	gpio_setup_porta();
 	gpio_setup_portb();
 	gpio_setup_porti();
 }
 
-void gpio_setup_porta() {
+void gpio_setup_porta(void) {
 	/*
 	 * PA9 USART1 TX
 	 */
@@ -25,7 +25,7 @@ void gpio_setup_porta() {
 	GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR9; //PA9 no pull-up no pull-down
 
 }
-void gpio_setup_portb() {
+void gpio_setup_portb(void) {
 	/*
 	 * PB7 USART1 RX
 	 */
@@ -36,7 +36,7 @@ void gpio_setup_portb() {
 	GPIOB->PUPDR &= ~(GPIO_PUPDR_PUPDR7); //PB7 no pull-up no pull-down
 
 }
-void gpio_setup_porti() {
+void gpio_setup_porti(void) {
 	/*
 	 *  PI1 GREEN LED LD1 ACTIVE HIGH
 	 * */
@@ -46,8 +46,8 @@ void gpio_setup_porti() {
 	GPIOI->PUPDR &= ~(GPIO_PUPDR_PUPDR1); //PI1 no pull-up no pull-down
 }
 
-void blink_ld1() {
+void blink_ld1(void) {
 	GPIOI->ODR |= GPIO_ODR_OD1; //set PI1 to high
-	for (uint32_t i = 0; i < 6000U; i++); //lame delay
+	for (uint32_t i = 0; i < 10000U; i++); //lame delay
 	GPIOI->ODR &= ~GPIO_ODR_OD1; //set PI1 to low
 }

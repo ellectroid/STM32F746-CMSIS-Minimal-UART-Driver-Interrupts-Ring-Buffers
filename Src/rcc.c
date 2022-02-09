@@ -3,30 +3,30 @@
 /*
  * Private functions
  */
-void rcc_usart1();
-void rcc_gpio_porta();
-void rcc_gpio_portb();
-void rcc_gpio_porti();
+void rcc_usart1(void);
+void rcc_gpio_porta(void);
+void rcc_gpio_portb(void);
+void rcc_gpio_porti(void);
 
-void rcc_setup() {
+void rcc_setup(void) {
 	rcc_usart1();
 	rcc_gpio_porta();
 	rcc_gpio_portb();
 	rcc_gpio_porti();
 }
 
-void rcc_usart1() {
-	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+void rcc_usart1(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_USART1EN; //enable clock for USART1 peripheral
 }
 
-void rcc_gpio_porta() {
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+void rcc_gpio_porta(void) {
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; //enable clock for GPIO port A
 }
 
-void rcc_gpio_portb() {
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+void rcc_gpio_portb(void) {
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN; //enable clock for GPIO port B
 }
 
-void rcc_gpio_porti(){
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
+void rcc_gpio_porti(void){
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN; //enable clock for GPIO port I
 }

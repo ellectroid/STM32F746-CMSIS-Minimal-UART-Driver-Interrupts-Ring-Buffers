@@ -7,21 +7,21 @@ void nvic_setup(void) {
 
 void USART1_IRQHandler(void) {
 	NVIC_ClearPendingIRQ(USART1_IRQn); //clear pending flag
-	if (USART1->ISR & USART_ISR_RTOF) { //if receiver timeout
-
-	} else if (USART1->ISR & USART_ISR_TXE) { //if send register empty
-		uart1_tx_buffer_current_element_pointer = (uart1_tx_buffer_current_element_pointer + 1U) % UART_TX_BUFFER_LENGTH; //increment pointer to current element in ring
-		USART1->TDR = uart1_tx_buffer[uart1_tx_buffer_current_element_pointer];
+	if ((usartpointer1->ISR & USART_ISR_TXE) && (usartpointer1->CR1 & USART_CR1_TXEIE)) { //if send register empty
+		uart1_tx_buffer_current_element_pointer = (uart1_tx_buffer_current_element_pointer + 1U) % UART_TX_BUFFER_LENGTH; //increment pointer to current element in ring & there was data to send
+		usartpointer1->TDR = uart1_tx_buffer[uart1_tx_buffer_current_element_pointer];
 		if (uart1_tx_buffer_current_element_pointer == uart1_tx_buffer_last_element_pointer) {
-			USART1->CR1 &= ~USART_CR1_TXEIE;
+			usartpointer1->CR1 &= ~USART_CR1_TXEIE;
 		}
 
-	} else if (USART1->ISR & USART_ISR_RXNE) { //if receive register not empty
-
-	} else if (USART1->ISR & USART_ISR_ORE) { //if overrun error
-
-	} else if (USART1->ISR & (USART_ISR_FE | USART_ISR_NE)) { //if frame error or noise
+	}
+	if ((usartpointer1->ISR & USART_ISR_RXNE) && (usartpointer1->CR1 & USART_CR1_RXNEIE)) { //if receive register not empty & we were expecting data
+		uart1_rx_buffer_current_element_pointer++; //increment pointer
+		uart1_rx_buffer_current_element_pointer %= uart1_rx_buffer_length; //if pointer overflow, reset
+		*(uart1_rx_buffer_memory_address + uart1_rx_buffer_current_element_pointer) = usartpointer1->RDR;
+		if ((uart1_rx_buffer_current_element_pointer == (uart1_rx_buffer_length - 1U)) && (uart1_rx_mode == UART_IT_RX_BUFFER_SINGLE)) {
+			usartpointer1->CR1 &= ~USART_CR1_RXNEIE; //if single buffer mode and wrote the last element, stop interrupts (reception ended)
+		}
 
 	}
-//determine what caused the interrupt
 }
